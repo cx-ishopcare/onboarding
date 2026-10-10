@@ -133,7 +133,7 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
 </style>
 
 <!-- Lock screen -->
-<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;">
+<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;" data-lock="1">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.1);display:flex;flex-direction:column;gap:20px;align-items:center;">
     <div style="background:var(--accent);color:#fff;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -342,18 +342,21 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
 (function(){
   var PW = 'cx2026!!';
   var KEY = 'cx_dashboard_auth';
+  function hideLock(){
+    document.getElementById('lockScreen').style.display='none';
+  }
   function checkPw(){
     var v = document.getElementById('pwInput').value;
     if(v===PW){
       try { localStorage.setItem(KEY,'ok'); } catch(e){}
-      document.getElementById('lockScreen').hidden=true;
+      hideLock();
     } else {
       document.getElementById('pwError').style.display='block';
       document.getElementById('pwInput').value='';
       document.getElementById('pwInput').focus();
     }
   }
-  try { if(localStorage.getItem(KEY)==='ok') document.getElementById('lockScreen').hidden=true; } catch(e){}
+  try { if(localStorage.getItem(KEY)==='ok') hideLock(); } catch(e){}
   document.getElementById('loginBtn').addEventListener('click', checkPw);
   document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPw(); });
 })();
