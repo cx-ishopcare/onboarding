@@ -1,0 +1,358 @@
+<title>CX 온보딩 대시보드</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky header + card grid */
+:root {
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text: #1a202c;
+  --text-sub: #64748b;
+  --accent: #5b8ec7;
+  --accent-light: #ebf2fb;
+  --badge-active: #16a34a;
+  --badge-active-bg: #dcfce7;
+  --badge-done: #64748b;
+  --badge-done-bg: #f1f5f9;
+  --shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a; --surface: #1e293b; --border: #334155;
+    --text: #f1f5f9; --text-sub: #94a3b8;
+    --accent: #7bb3e0; --accent-light: #1e3554;
+    --badge-active-bg: #14532d; --badge-done-bg: #1e293b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #f1f5f9; --text-sub: #94a3b8;
+  --accent: #7bb3e0; --accent-light: #1e3554;
+  --badge-active-bg: #14532d; --badge-done-bg: #1e293b;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100%;
+}
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+}
+.logo-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+header h1 { font-size: 16px; font-weight: 600; margin: 0; }
+header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 28px 20px; }
+
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--text-sub); text-transform: uppercase; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 36px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.15s;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.card:hover { box-shadow: 0 4px 16px rgba(91,142,199,0.12); border-color: var(--accent); }
+
+.card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.card-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.badge {
+  font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.badge.active { background: var(--badge-active-bg); color: var(--badge-active); }
+.badge.done { background: var(--badge-done-bg); color: var(--badge-done); }
+
+.card-meta { font-size: 12px; color: var(--text-sub); display: flex; flex-direction: column; gap: 4px; }
+.meta-row { display: flex; align-items: center; gap: 6px; }
+.meta-row svg { flex-shrink: 0; opacity: 0.6; }
+
+.card-actions { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 500; padding: 6px 12px;
+  border-radius: 7px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); cursor: pointer;
+  text-decoration: none; transition: all 0.12s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.btn.primary {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.btn.primary:hover { opacity: 0.88; }
+
+.note {
+  font-size: 11px; color: var(--text-sub); padding: 10px 14px;
+  background: var(--accent-light); border-radius: 8px; line-height: 1.5;
+  border-left: 3px solid var(--accent);
+}
+
+.stats-bar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px;
+  display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.stat { display: flex; flex-direction: column; gap: 2px; }
+.stat-num { font-size: 24px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 11px; color: var(--text-sub); }
+.stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+</style>
+
+<!-- Lock screen -->
+<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.1);display:flex;flex-direction:column;gap:20px;align-items:center;">
+    <div style="background:var(--accent);color:#fff;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;">관리자 전용</div>
+      <div style="font-size:12px;color:var(--text-sub);">CX 온보딩 대시보드</div>
+    </div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+      <input id="pwInput" type="password" placeholder="비밀번호 입력" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')checkPw()">
+      <div id="pwError" style="font-size:12px;color:#e53e3e;text-align:center;display:none;">비밀번호가 맞지 않아요.</div>
+      <button onclick="checkPw()" style="width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">로그인</button>
+    </div>
+    <div style="font-size:11px;color:var(--text-sub);text-align:center;">아이샵케어 CX팀 리더만 접근 가능해요</div>
+  </div>
+</div>
+<script>
+(function(){
+  var PW = 'cx2026!!'; // ← 여기서 비밀번호 변경
+  var KEY = 'cx_dashboard_auth';
+  try { if(localStorage.getItem(KEY)==='ok') document.getElementById('lockScreen').hidden=true; } catch(e){}
+  window.checkPw = function(){
+    var v = document.getElementById('pwInput').value;
+    if(v===PW){
+      try { localStorage.setItem(KEY,'ok'); } catch(e){}
+      document.getElementById('lockScreen').hidden=true;
+    } else {
+      document.getElementById('pwError').style.display='block';
+      document.getElementById('pwInput').value='';
+      document.getElementById('pwInput').focus();
+    }
+  };
+})();
+</script>
+
+<header>
+  <span class="logo-badge">CX</span>
+  <h1>온보딩 커리큘럼 대시보드</h1>
+  <p>관리자용 · 아이샵케어</p>
+</header>
+
+<div class="container">
+
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-num">2</span>
+      <span class="stat-label">진행 중</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num">5</span>
+      <span class="stat-label">완료 (고정)</span>
+    </div>
+  </div>
+
+  <div class="section-label">진행 중</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">박지수님</div>
+        <span class="badge active">온보딩 중</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          입사일 미정 (최신 원본 시트 기준)
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          6일 과정 · 노션 링크 연동
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn primary" href="https://youngjiyu-spec.github.io/onboarding/?name=박지수" target="_blank">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          커리큘럼 열기
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">김지안님</div>
+        <span class="badge active">10/26 입사 예정</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          2026년 10월 26일 (월) 입사
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          6일 과정 · 별도 커리큘럼 구성
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn primary" href="https://youngjiyu-spec.github.io/onboarding/?name=김지안" target="_blank">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          커리큘럼 열기
+        </a>
+        <span class="note" style="margin:0;padding:6px 10px;font-size:11px;">고정 파일 생성 필요</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-label">완료 · 고정됨</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">유지안님</div>
+        <span class="badge done">완료</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          6/1 입사 · 전용 시트 고정
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          온보딩 + 콜 상담 커리큘럼
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/jianyoo.html" target="_blank">온보딩</a>
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/training_jianyoo.html" target="_blank">상담 적응</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">권나영 · 김현지 · 홍지윤님</div>
+        <span class="badge done">완료</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          6/15 입사 · 3인 공용 시트 고정
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          name= 파라미터로 개인별 구분
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=권나영" target="_blank">권나영</a>
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=김현지" target="_blank">김현지</a>
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=홍지윤" target="_blank">홍지윤</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">박수진님</div>
+        <span class="badge done">완료</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          7/6 입사 · 전용 시트 고정
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          6일 과정
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0706_박수진.html?name=박수진" target="_blank">온보딩</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">김경순 · 박동민 · 김민섭님</div>
+        <span class="badge done">완료</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          8/31 입사 · 3인 공용 시트 고정
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          name= 파라미터로 개인별 구분
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김경순" target="_blank">김경순</a>
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=박동민" target="_blank">박동민</a>
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김민섭" target="_blank">김민섭</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-name">오해린님</div>
+        <span class="badge done">완료</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          9/14 입사 · 전용 시트 고정
+        </div>
+        <div class="meta-row">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          6일 과정
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0914_오해린.html?name=오해린" target="_blank">온보딩</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    💡 <strong>관리 안내</strong> — 새 입사자가 생기면 원본 시트 사본 생성 → Apps Script 재배포 → GitHub에 전용 HTML 업로드 후 이 대시보드에 카드를 추가해요. 기존 카드는 고정된 시트를 바라보므로 원본을 수정해도 영향받지 않아요.
+  </div>
+
+</div>
