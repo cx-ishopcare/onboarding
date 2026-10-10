@@ -143,19 +143,17 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
       <div style="font-size:12px;color:var(--text-sub);">CX 온보딩 대시보드</div>
     </div>
     <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
-      <input id="pwInput" type="password" placeholder="비밀번호 입력" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')checkPw()">
+      <input id="pwInput" type="password" placeholder="비밀번호 입력" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;">
       <div id="pwError" style="font-size:12px;color:#e53e3e;text-align:center;display:none;">비밀번호가 맞지 않아요.</div>
-      <button onclick="checkPw()" style="width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">로그인</button>
+      <button id="loginBtn" style="width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">로그인</button>
     </div>
-    <div style="font-size:11px;color:var(--text-sub);text-align:center;">아이샵케어 CX팀 리더만 접근 가능해요</div>
   </div>
 </div>
 <script>
 (function(){
-  var PW = 'cx2026!!'; // ← 여기서 비밀번호 변경
+  var PW = 'cx2026!!';
   var KEY = 'cx_dashboard_auth';
-  try { if(localStorage.getItem(KEY)==='ok') document.getElementById('lockScreen').hidden=true; } catch(e){}
-  window.checkPw = function(){
+  function checkPw(){
     var v = document.getElementById('pwInput').value;
     if(v===PW){
       try { localStorage.setItem(KEY,'ok'); } catch(e){}
@@ -165,7 +163,10 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
       document.getElementById('pwInput').value='';
       document.getElementById('pwInput').focus();
     }
-  };
+  }
+  try { if(localStorage.getItem(KEY)==='ok') document.getElementById('lockScreen').hidden=true; } catch(e){}
+  document.getElementById('loginBtn').addEventListener('click', checkPw);
+  document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPw(); });
 })();
 </script>
 
@@ -208,7 +209,7 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn primary" href="https://youngjiyu-spec.github.io/onboarding/?name=박지수" target="_blank">
+        <a class="btn primary" href="https://cx-ishopcare.github.io/onboarding/?name=박지수" target="_blank">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           커리큘럼 열기
         </a>
@@ -231,7 +232,7 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn primary" href="https://youngjiyu-spec.github.io/onboarding/?name=김지안" target="_blank">
+        <a class="btn primary" href="https://cx-ishopcare.github.io/onboarding/?name=김지안" target="_blank">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           커리큘럼 열기
         </a>
@@ -260,8 +261,8 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/jianyoo.html" target="_blank">온보딩</a>
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/training_jianyoo.html" target="_blank">상담 적응</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/jianyoo.html" target="_blank">온보딩</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/training_jianyoo.html" target="_blank">상담 적응</a>
       </div>
     </div>
 
@@ -281,9 +282,9 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=권나영" target="_blank">권나영</a>
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=김현지" target="_blank">김현지</a>
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=홍지윤" target="_blank">홍지윤</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=권나영" target="_blank">권나영</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=김현지" target="_blank">김현지</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=홍지윤" target="_blank">홍지윤</a>
       </div>
     </div>
 
@@ -303,7 +304,7 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0706_박수진.html?name=박수진" target="_blank">온보딩</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0706_박수진.html?name=박수진" target="_blank">온보딩</a>
       </div>
     </div>
 
@@ -323,9 +324,9 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김경순" target="_blank">김경순</a>
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=박동민" target="_blank">박동민</a>
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김민섭" target="_blank">김민섭</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김경순" target="_blank">김경순</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=박동민" target="_blank">박동민</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김민섭" target="_blank">김민섭</a>
       </div>
     </div>
 
@@ -345,7 +346,7 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
         </div>
       </div>
       <div class="card-actions">
-        <a class="btn" href="https://youngjiyu-spec.github.io/onboarding/index_0914_오해린.html?name=오해린" target="_blank">온보딩</a>
+        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0914_오해린.html?name=오해린" target="_blank">온보딩</a>
       </div>
     </div>
 
