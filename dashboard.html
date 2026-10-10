@@ -1,7 +1,11 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CX 온보딩 대시보드</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: sticky header + card grid */
 :root {
   --bg: #f8f9fb;
   --surface: #ffffff;
@@ -15,6 +19,7 @@
   --badge-done: #64748b;
   --badge-done-bg: #f1f5f9;
   --shadow: 0 1px 4px rgba(0,0,0,0.06);
+  --sidebar-w: 220px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -38,18 +43,22 @@ body {
   background: var(--bg);
   color: var(--text);
   margin: 0;
-  min-height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+/* ── 상단 헤더 ── */
 header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 16px 24px;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
   gap: 12px;
   position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  z-index: 10;
+  top: 0;
+  z-index: 20;
 }
 .logo-badge {
   background: var(--accent);
@@ -60,22 +69,91 @@ header {
   border-radius: 6px;
   letter-spacing: 0.05em;
 }
-header h1 { font-size: 16px; font-weight: 600; margin: 0; }
-header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
+header h1 { font-size: 15px; font-weight: 600; margin: 0; }
+header .header-sub { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
 
-.container { max-width: 960px; margin: 0 auto; padding: 28px 20px; }
+/* ── 본문 레이아웃 ── */
+.layout {
+  display: flex;
+  flex: 1;
+}
 
+/* ── 사이드바 ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 12px;
+  position: sticky;
+  top: 49px; /* header 높이 */
+  height: calc(100vh - 49px);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.sidebar-section {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  padding: 0 8px;
+  margin: 16px 0 6px;
+}
+.sidebar-section:first-child { margin-top: 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-sub);
+  transition: all 0.12s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--accent-light); color: var(--accent); }
+.nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.nav-item svg { flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--badge-active-bg);
+  color: var(--badge-active);
+}
+.nav-badge.done {
+  background: var(--badge-done-bg);
+  color: var(--badge-done);
+}
+
+/* ── 메인 콘텐츠 ── */
+.main {
+  flex: 1;
+  padding: 28px 24px;
+  min-width: 0;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── 섹션 레이블 ── */
 .section-label {
   font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
   color: var(--text-sub); text-transform: uppercase; margin-bottom: 14px;
   display: flex; align-items: center; gap: 8px;
 }
-.section-label::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 36px; }
-
+/* ── 카드 그리드 ── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; margin-bottom: 36px; }
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -86,7 +164,6 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
   display: flex; flex-direction: column; gap: 10px;
 }
 .card:hover { box-shadow: 0 4px 16px rgba(91,142,199,0.12); border-color: var(--accent); }
-
 .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .card-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
 .badge {
@@ -95,12 +172,12 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
 }
 .badge.active { background: var(--badge-active-bg); color: var(--badge-active); }
 .badge.done { background: var(--badge-done-bg); color: var(--badge-done); }
-
 .card-meta { font-size: 12px; color: var(--text-sub); display: flex; flex-direction: column; gap: 4px; }
 .meta-row { display: flex; align-items: center; gap: 6px; }
 .meta-row svg { flex-shrink: 0; opacity: 0.6; }
-
 .card-actions { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+
+/* ── 버튼 ── */
 .btn {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 12px; font-weight: 500; padding: 6px 12px;
@@ -109,17 +186,10 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
   text-decoration: none; transition: all 0.12s;
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-.btn.primary {
-  background: var(--accent); color: #fff; border-color: var(--accent);
-}
+.btn.primary { background: var(--accent); color: #fff !important; border-color: var(--accent); }
 .btn.primary:hover { opacity: 0.88; }
 
-.note {
-  font-size: 11px; color: var(--text-sub); padding: 10px 14px;
-  background: var(--accent-light); border-radius: 8px; line-height: 1.5;
-  border-left: 3px solid var(--accent);
-}
-
+/* ── 통계바 ── */
 .stats-bar {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 12px; padding: 16px 20px;
@@ -130,10 +200,82 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
 .stat-num { font-size: 24px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
 .stat-label { font-size: 11px; color: var(--text-sub); }
 .stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+
+/* ── 노트 ── */
+.note {
+  font-size: 11px; color: var(--text-sub); padding: 10px 14px;
+  background: var(--accent-light); border-radius: 8px; line-height: 1.5;
+  border-left: 3px solid var(--accent);
+}
+
+/* ── 채팅/콜 가이드 패널 ── */
+.guide-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 28px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+}
+.guide-card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.guide-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--accent-light); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.guide-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.guide-desc { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+.guide-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.guide-step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.guide-step-text { font-size: 13px; line-height: 1.6; }
+.guide-step-text strong { font-weight: 600; }
+
+/* ── 모바일 ── */
+@media (max-width: 680px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+  }
+  .layout { flex-direction: column; }
+  .sidebar-section { display: none; }
+  .nav-item { white-space: nowrap; flex-direction: row; width: auto; padding: 7px 12px; }
+  .main { padding: 20px 16px; }
+}
 </style>
+</head>
+<body>
 
 <!-- Lock screen -->
-<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;" data-lock="1">
+<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.1);display:flex;flex-direction:column;gap:20px;align-items:center;">
     <div style="background:var(--accent);color:#fff;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -152,197 +294,258 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
 
 <header>
   <span class="logo-badge">CX</span>
-  <h1>온보딩 커리큘럼 대시보드</h1>
-  <p>관리자용 · 아이샵케어</p>
+  <h1>온보딩 대시보드</h1>
+  <span class="header-sub">관리자용 · 아이샵케어</span>
 </header>
 
-<div class="container">
+<div class="layout">
 
-  <div class="stats-bar">
-    <div class="stat">
-      <span class="stat-num">1</span>
-      <span class="stat-label">진행 중</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-num">6</span>
-      <span class="stat-label">완료 (고정)</span>
-    </div>
-  </div>
+  <!-- 사이드바 -->
+  <nav class="sidebar">
+    <button class="nav-item active" data-tab="tab-active" onclick="switchTab(this)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      진행중
+      <span class="nav-badge">1</span>
+    </button>
+    <button class="nav-item" data-tab="tab-done" onclick="switchTab(this)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      완료
+      <span class="nav-badge done">6</span>
+    </button>
+    <button class="nav-item" data-tab="tab-guide" onclick="switchTab(this)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      채팅/콜 동석
+    </button>
+  </nav>
 
-  <div class="section-label">진행 중</div>
-  <div class="grid">
+  <!-- 메인 -->
+  <main class="main">
 
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">김지안님</div>
-        <span class="badge active">10/26 입사 예정</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          2026년 10월 26일 (월) 입사
+    <!-- 탭 1: 진행 중 -->
+    <div id="tab-active" class="tab-panel active">
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-num">1</span>
+          <span class="stat-label">진행 중</span>
         </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          6일 과정 · 별도 커리큘럼 구성
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">6</span>
+          <span class="stat-label">완료 (고정)</span>
         </div>
       </div>
-      <div class="card-actions">
-        <a class="btn primary" href="https://cx-ishopcare.github.io/onboarding/?name=김지안" target="_blank">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          커리큘럼 열기
+
+      <div class="section-label">진행 중</div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">김지안님</div>
+            <span class="badge active">10/26 입사 예정</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              2026년 10월 26일 (월) 입사
+            </div>
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6일 과정 · 별도 커리큘럼 구성
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn primary" href="https://cx-ishopcare.github.io/onboarding/?name=김지안" target="_blank">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              커리큘럼 열기
+            </a>
+            <span class="note" style="margin:0;padding:6px 10px;font-size:11px;">고정 파일 생성 필요</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        💡 <strong>관리 안내</strong> — 새 입사자가 생기면 원본 시트 사본 생성 → Apps Script 재배포 → GitHub에 전용 HTML 업로드 후 이 대시보드에 카드를 추가해요.
+      </div>
+    </div>
+
+    <!-- 탭 2: 완료 -->
+    <div id="tab-done" class="tab-panel">
+      <div class="section-label">완료 · 고정됨</div>
+      <div class="grid">
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">박지수님</div>
+            <span class="badge done">완료</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              9/28 입사
+            </div>
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6일 과정
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_1026_박지수.html?name=박지수" target="_blank">온보딩</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">오해린님</div>
+            <span class="badge done">완료</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              9/14 입사
+            </div>
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6일 과정
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0914_오해린.html?name=오해린" target="_blank">온보딩</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">김경순 · 박동민 · 김민섭님</div>
+            <span class="badge done">완료</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              8/31 입사
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김경순" target="_blank">김경순</a>
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=박동민" target="_blank">박동민</a>
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김민섭" target="_blank">김민섭</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">박수진님</div>
+            <span class="badge done">완료</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              7/6 입사
+            </div>
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6일 과정
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0706_박수진.html?name=박수진" target="_blank">온보딩</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">권나영 · 김현지 · 홍지윤님</div>
+            <span class="badge done">완료</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              6/15 입사
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=권나영" target="_blank">권나영</a>
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=김현지" target="_blank">김현지</a>
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=홍지윤" target="_blank">홍지윤</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-name">유지안님</div>
+            <span class="badge done">완료</span>
+          </div>
+          <div class="card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              6/1 입사
+            </div>
+            <div class="meta-row">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6일 과정
+            </div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="https://cx-ishopcare.github.io/onboarding/jianyoo.html" target="_blank">온보딩</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 탭 3: 채팅/콜 동석 가이드 -->
+    <div id="tab-guide" class="tab-panel">
+      <div class="section-label">채팅 · 콜 동석 가이드</div>
+      <div class="guide-card">
+        <div class="guide-card-top">
+          <div class="guide-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <div class="guide-title">신규 입사자 채팅/콜 동석 가이드</div>
+            <div class="guide-desc" style="margin-top:4px;">온보딩 6일 과정 완료 후 진행하는 실전 동석 프로그램이에요.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="guide-step">
+            <div class="guide-step-num">1</div>
+            <div class="guide-step-text"><strong>온보딩 6일 과정 완료</strong> 후 동석 가이드를 진행해요.</div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">2</div>
+            <div class="guide-step-text">아래 시트에서 채팅·콜 동석 일정과 체크리스트를 확인하세요.</div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">3</div>
+            <div class="guide-step-text">동석 완료 후 시트에 기록을 남겨주세요.</div>
+          </div>
+        </div>
+
+        <a class="btn primary" style="width:fit-content;padding:10px 20px;font-size:13px;" href="https://docs.google.com/spreadsheets/d/1IWiGxDGiwcjkLXov4SaNt_x54pb8-_D6KPGkqOMms2k/edit?gid=0#gid=0" target="_blank">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          채팅/콜 동석 가이드 시트 열기
         </a>
-        <span class="note" style="margin:0;padding:6px 10px;font-size:11px;">고정 파일 생성 필요</span>
       </div>
     </div>
 
-  </div>
-
-  <div class="section-label">완료 · 고정됨</div>
-  <div class="grid">
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">박지수님</div>
-        <span class="badge done">완료</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          10/26 입사 · 전용 시트 고정
-        </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          6일 과정 · 노션 링크 연동
-        </div>
-      </div>
-      <div class="card-actions">
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_1026_박지수.html?name=박지수" target="_blank">온보딩</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">유지안님</div>
-        <span class="badge done">완료</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          6/1 입사 · 전용 시트 고정
-        </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          온보딩 + 콜 상담 커리큘럼
-        </div>
-      </div>
-      <div class="card-actions">
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/jianyoo.html" target="_blank">온보딩</a>
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/training_jianyoo.html" target="_blank">상담 적응</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">권나영 · 김현지 · 홍지윤님</div>
-        <span class="badge done">완료</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          6/15 입사 · 3인 공용 시트 고정
-        </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          name= 파라미터로 개인별 구분
-        </div>
-      </div>
-      <div class="card-actions">
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=권나영" target="_blank">권나영</a>
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=김현지" target="_blank">김현지</a>
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0615_권나영김현지홍지윤.html?name=홍지윤" target="_blank">홍지윤</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">박수진님</div>
-        <span class="badge done">완료</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          7/6 입사 · 전용 시트 고정
-        </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          6일 과정
-        </div>
-      </div>
-      <div class="card-actions">
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0706_박수진.html?name=박수진" target="_blank">온보딩</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">김경순 · 박동민 · 김민섭님</div>
-        <span class="badge done">완료</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          8/31 입사 · 3인 공용 시트 고정
-        </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          name= 파라미터로 개인별 구분
-        </div>
-      </div>
-      <div class="card-actions">
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김경순" target="_blank">김경순</a>
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=박동민" target="_blank">박동민</a>
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0831_김경순박동민김민섭.html?name=김민섭" target="_blank">김민섭</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-name">오해린님</div>
-        <span class="badge done">완료</span>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          9/14 입사 · 전용 시트 고정
-        </div>
-        <div class="meta-row">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          6일 과정
-        </div>
-      </div>
-      <div class="card-actions">
-        <a class="btn" href="https://cx-ishopcare.github.io/onboarding/index_0914_오해린.html?name=오해린" target="_blank">온보딩</a>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="note">
-    💡 <strong>관리 안내</strong> — 새 입사자가 생기면 원본 시트 사본 생성 → Apps Script 재배포 → GitHub에 전용 HTML 업로드 후 이 대시보드에 카드를 추가해요. 기존 카드는 고정된 시트를 바라보므로 원본을 수정해도 영향받지 않아요.
-  </div>
-
+  </main>
 </div>
 
 <script>
+function switchTab(el) {
+  // 사이드바 active 상태
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  el.classList.add('active');
+  // 패널 전환
+  var target = el.getAttribute('data-tab');
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(target).classList.add('active');
+}
+
+// 비밀번호 잠금
 (function(){
   var PW = 'cx2026!!';
   var KEY = 'cx_dashboard_auth';
-  function hideLock(){
-    document.getElementById('lockScreen').style.display='none';
-  }
+  function hideLock(){ document.getElementById('lockScreen').style.display='none'; }
   function checkPw(){
     var v = document.getElementById('pwInput').value;
     if(v===PW){
@@ -359,3 +562,5 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
   document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPw(); });
 })();
 </script>
+</body>
+</html>
