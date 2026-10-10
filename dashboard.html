@@ -149,26 +149,6 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
     </div>
   </div>
 </div>
-<script>
-(function(){
-  var PW = 'cx2026!!';
-  var KEY = 'cx_dashboard_auth';
-  function checkPw(){
-    var v = document.getElementById('pwInput').value;
-    if(v===PW){
-      try { localStorage.setItem(KEY,'ok'); } catch(e){}
-      document.getElementById('lockScreen').hidden=true;
-    } else {
-      document.getElementById('pwError').style.display='block';
-      document.getElementById('pwInput').value='';
-      document.getElementById('pwInput').focus();
-    }
-  }
-  try { if(localStorage.getItem(KEY)==='ok') document.getElementById('lockScreen').hidden=true; } catch(e){}
-  document.getElementById('loginBtn').addEventListener('click', checkPw);
-  document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPw(); });
-})();
-</script>
 
 <header>
   <span class="logo-badge">CX</span>
@@ -357,3 +337,24 @@ header p { font-size: 12px; color: var(--text-sub); margin: 0 0 0 auto; }
   </div>
 
 </div>
+
+<script>
+(function(){
+  var PW = 'cx2026!!';
+  var KEY = 'cx_dashboard_auth';
+  function checkPw(){
+    var v = document.getElementById('pwInput').value;
+    if(v===PW){
+      try { localStorage.setItem(KEY,'ok'); } catch(e){}
+      document.getElementById('lockScreen').hidden=true;
+    } else {
+      document.getElementById('pwError').style.display='block';
+      document.getElementById('pwInput').value='';
+      document.getElementById('pwInput').focus();
+    }
+  }
+  try { if(localStorage.getItem(KEY)==='ok') document.getElementById('lockScreen').hidden=true; } catch(e){}
+  document.getElementById('loginBtn').addEventListener('click', checkPw);
+  document.getElementById('pwInput').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPw(); });
+})();
+</script>
